@@ -1,0 +1,134 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Nuevo pedido</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+        <ion-list-header lines="full">
+            <ion-label class="title">Productos</ion-label>
+        </ion-list-header>
+        <ng-container *ngIf="productos.length">
+            <ng-container *ngFor="let prod of productos; let i = index;">
+                <ion-item>
+                    <ion-thumbnail slot="start">
+                        <ion-img [src]="'/assets/img/'+ prod.src"></ion-img>
+                    </ion-thumbnail>
+                    <ion-label>{{prod.nombre}}</ion-label>
+                </ion-item>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="!productos.length">
+            <ion-text>
+                <h6 style="margin-left: 15px;">No agregaste productos a la lista</h6>
+            </ion-text>
+        </ng-container>
+
+    </ion-list>
+
+    <ion-list>
+        <ion-list-header lines="full">
+            <ion-label class="title">Lugar de entrega</ion-label>
+            <ion-button (click)="entregaModal()">{{direccion ? 'Editar' : 'Añadir'}}</ion-button>
+        </ion-list-header>
+        <ng-container>
+            <ion-text *ngIf="!direccion">
+                <h6 style="margin-left: 15px;">Agregá donde te lo llevamos</h6>
+            </ion-text>
+            <ion-text *ngIf="direccion">
+                <h6 style="margin-left: 15px;">{{direccion.calle + ' ' + direccion.numero}} </h6>
+            </ion-text>
+        </ng-container>
+    </ion-list>
+
+    <form [formGroup]="form">
+        <ion-list>
+            <ion-list-header lines="full">
+                <ion-label class="title">Forma de pago</ion-label>
+            </ion-list-header>
+            <ion-segment formControlName="formaPago">
+                <ion-segment-button value="efectivo">
+                    <ion-label>Efectivo</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="tarjeta">
+                    <ion-label>Tarjeta</ion-label>
+                </ion-segment-button>
+            </ion-segment>
+
+            <ng-container *ngIf="form.get('formaPago').value === 'efectivo'">
+                <ion-item>
+                    <ion-label position="floating">Monto con el que pagás</ion-label>
+                    <ion-input formControlName="monto" type="number"></ion-input>
+                </ion-item>
+            </ng-container>
+            <ng-container *ngIf="form.get('formaPago').value  === 'tarjeta'">
+                <ion-card>
+                    <ion-card-header>
+                        <ion-card-title>Datos</ion-card-title>
+                        <ion-card-subtitle>Ingrese los datos de su tarjeta VISA</ion-card-subtitle>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <ion-item>
+                            <ion-label position="floating">Nombre y apellido</ion-label>
+                            <ion-input formControlName="nombreApellido" type="text"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="floating">Número</ion-label>
+                            <ion-input formControlName="numeroTarjeta" minlength="15" maxlength="16"
+                                       type="number"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="floating">Vencimiento</ion-label>
+                            <ion-datetime displayFormat="MM/YY" min="2020-05-11" max="2028-12-09"
+                                          formControlName="vencimiento"
+                                          value="2020-05-11T15:03:46.789"></ion-datetime>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="floating">Código de seguridad</ion-label>
+                            <ion-input formControlName="codigoSeg" type="number" minlength="3" maxlength="4"
+                                       inputmode="numeric"></ion-input>
+                        </ion-item>
+                    </ion-card-content>
+                </ion-card>
+            </ng-container>
+        </ion-list>
+        <ion-list>
+            <ion-list-header lines="full">
+                <ion-label class="title">Cuando te lo llevamos?</ion-label>
+            </ion-list-header>
+            <ion-segment formControlName="fechaEntregaSegment">
+                <ion-segment-button value="now">
+                    <ion-label>Lo antes posible!</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="later">
+                    <ion-label>En otro momento</ion-label>
+                </ion-segment-button>
+            </ion-segment>
+            <ng-container *ngIf="form.get('fechaEntregaSegment').value === 'later'">
+                <ion-item>
+                    <ion-label position="floating">Fecha de entrega</ion-label>
+                    <ion-datetime displayFormat="DD/MM/YY" min="2020-05-12" max="2028-12-09"
+                                  formControlName="fechaEntrega"
+                                  value="2020-05-12T00:00:00.000"></ion-datetime>
+                </ion-item>
+                <ion-item>
+                    <ion-label position="floating">Hora de entrega</ion-label>
+                    <ion-datetime displayFormat="hh:mm A"
+                                  formControlName="horaEntrega"
+                                  minuteValues="0"></ion-datetime>
+                </ion-item>
+            </ng-container>
+
+
+        </ion-list>
+    </form>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button expand="full" fill="clear" color="primary" (click)="confirm()">Confirmar</ion-button>
+    </ion-toolbar>
+</ion-footer>
